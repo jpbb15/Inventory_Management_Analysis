@@ -1,3 +1,5 @@
+import panda as pd
+
 def convert_to_datetime(df, column_name):
     """Convert a column to datetime format."""
     df[column_name] = pd.to_datetime(df[column_name])
