@@ -1,4 +1,4 @@
-import panda as pd
+import pandas as pd
 
 def convert_to_datetime(df, column_name):
     """Convert a column to datetime format."""
