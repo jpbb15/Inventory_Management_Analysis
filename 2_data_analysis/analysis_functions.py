@@ -120,3 +120,33 @@ def visualize_customer_segments(customer_data):
     plt.yscale('log')  # Use log scale if spending values have a wide range
     plt.xscale('log')  # Use log scale if frequency values have a wide range
     plt.show()
+
+def prepare_monthly_sales(df_analysis):
+    """Prepare the monthly sales data aggregated by product category."""
+    
+    # Convert the 'invoicedate' to a datetime format and extract month and year
+    df_analysis['invoicedate'] = pd.to_datetime(df_analysis['invoicedate'])
+    df_analysis['month'] = df_analysis['invoicedate'].dt.month
+    df_analysis['year'] = df_analysis['invoicedate'].dt.year
+    
+    # Aggregate sales data by product category and month
+    monthly_sales = df_analysis.groupby(['year', 'month', 'description'])['total_purchase'].sum().unstack().fillna(0)
+    
+    return monthly_sales
+
+def plot_seasonal_trends(monthly_sales, top_n=10):
+    """Plot the sales trends for the top N most popular product categories."""
+    
+    # Select the top N popular product categories for visualization
+    popular_categories = monthly_sales.sum().sort_values(ascending=False).head(top_n).index
+    
+    # Plot the sales trends for these popular categories
+    plt.figure(figsize=(14, 8))
+    for category in popular_categories:
+        plt.plot(monthly_sales.index.get_level_values('month'), monthly_sales[category], label=category)
+    
+    plt.title('Monthly Sales Trends for Popular Product Categories')
+    plt.xlabel('Month')
+    plt.ylabel('Total Sales')
+    plt.legend(title='Product Categories')
+    plt.show()
