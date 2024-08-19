@@ -26,13 +26,20 @@ def get_top_categories(df_analysis, top_n=5):
     return category_avg_purchase.head(top_n)
 
 def plot_bar_chart(df_analysis):
-    """Plot a bar chart showing the distribution of purchases across product categories."""
+    """Plot a bar chart showing the top 15 products based on total purchase amounts."""
+    # Calculate the total purchase amount for each product category
     category_totals = df_analysis.groupby('description')['total_purchase'].sum().sort_values(ascending=False)
+    
+    # Select the top 15 product categories
+    top_15_categories = category_totals.head(15)
+    
+    # Plot the bar chart
     plt.figure(figsize=(10, 6))
-    category_totals.plot(kind='bar')
-    plt.title('Total Purchases by Product Category')
+    top_15_categories.plot(kind='bar')
+    plt.title('Top 15 Products by Total Purchase Amount')
     plt.ylabel('Total Purchase Amount')
     plt.xlabel('Product Category')
+    plt.xticks(rotation=45, ha='right')  # Rotate the x-axis labels for better readability
     plt.show()
 
 def plot_line_graph(df_analysis):
