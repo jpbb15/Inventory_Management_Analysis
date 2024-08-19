@@ -80,8 +80,8 @@ def plot_product_cooccurrence_heatmap(df_analysis):
     plt.title('Top 15 Product Co-occurrence Correlation Matrix')
     plt.show()
 
-def generate_customer_segments(df_analysis):
-    """Generate customer segments based on purchase frequency and total spending."""
+def generate_customer_segments_manual(df_analysis):
+    """Generate customer segments based on purchase frequency and total spending using manual bins."""
     
     # Step 1: Calculate total spending and purchase frequency for each customer
     customer_data = df_analysis.groupby('customerid').agg({
@@ -89,9 +89,12 @@ def generate_customer_segments(df_analysis):
         'total_purchase': 'sum'  # Total spending
     }).rename(columns={'invoiceno': 'purchase_frequency', 'total_purchase': 'total_spending'})
     
-    # Step 2: Manual segmentation with pd.cut()
-    customer_data['spending_segment'] = pd.cut(customer_data['total_spending'], bins=4, labels=['Low', 'Medium', 'High', 'Very High'])
-    customer_data['frequency_segment'] = pd.cut(customer_data['purchase_frequency'], bins=4, labels=['Low', 'Medium', 'High', 'Very High'])
+    # Step 2: Manual binning for segmentation
+    spending_bins = [0, 100, 1000, 5000, df_analysis['total_purchase'].max()]
+    frequency_bins = [0, 2, 5, 10, df_analysis['invoiceno'].nunique()]
+    
+    customer_data['spending_segment'] = pd.cut(customer_data['total_spending'], bins=spending_bins, labels=['Low', 'Medium', 'High', 'Very High'])
+    customer_data['frequency_segment'] = pd.cut(customer_data['purchase_frequency'], bins=frequency_bins, labels=['Low', 'Medium', 'High', 'Very High'])
     
     # Step 3: Combine segments to identify high-value customers
     customer_data['overall_segment'] = customer_data['spending_segment'].astype(str) + ' Spending / ' + customer_data['frequency_segment'].astype(str) + ' Frequency'
@@ -104,6 +107,9 @@ def visualize_customer_segments(customer_data):
     # Ensure spending and frequency segments are categorical for better color separation
     customer_data['spending_segment'] = customer_data['spending_segment'].astype('category')
     customer_data['frequency_segment'] = customer_data['frequency_segment'].astype('category')
+    
+    # Exclude rows with 'nan' in the overall_segment column
+    customer_data = customer_data.dropna(subset=['overall_segment'])
     
     # Step 4: Visualize the segments
     plt.figure(figsize=(12, 8))
