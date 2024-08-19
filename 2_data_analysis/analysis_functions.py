@@ -59,28 +59,19 @@ def plot_line_graph(df_analysis):
     plt.xlabel('Month')
     plt.show()
 
-def plot_heatmap(df_analysis):
-    """Plot a heatmap to identify correlations between the top 15 products based on their purchase amounts."""
-    # Calculate total purchase amounts for each product category
-    category_totals = df_analysis.groupby('description')['total_purchase'].sum().sort_values(ascending=False)
+def plot_product_cooccurrence_heatmap(df_analysis):
+    """Plot a heatmap to identify the co-occurrence of product purchases."""
+    # Pivot table to create a binary matrix of products purchased per transaction (invoice)
+    cooccurrence_matrix = df_analysis.pivot_table(index='invoiceno', columns='description', values='quantity', aggfunc='sum').fillna(0)
+    cooccurrence_matrix = cooccurrence_matrix.applymap(lambda x: 1 if x > 0 else 0)
     
-    # Select the top 15 product categories
-    top_15_categories = category_totals.head(15).index
-    
-    # Filter the dataframe to include only the top 15 products
-    top_15_df = df_analysis[df_analysis['description'].isin(top_15_categories)]
-    
-    # Pivot the table to get a matrix of purchase amounts by invoice and product
-    # This assumes each row corresponds to a single purchase event (e.g., an invoice line)
-    category_sales = top_15_df.pivot_table(index='invoiceno', columns='description', values='total_purchase', aggfunc='sum').fillna(0)
-    
-    # Calculate the correlation matrix for the top 15 products
-    correlation_matrix = category_sales.corr()
+    # Calculate the correlation matrix of product co-occurrence
+    correlation_matrix = cooccurrence_matrix.corr()
     
     # Plot the heatmap
-    plt.figure(figsize=(12, 8))
-    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1)
-    plt.title('Correlation Between Top 15 Products Based on Purchase Amounts')
+    plt.figure(figsize=(14, 10))
+    sns.heatmap(correlation_matrix, annot=False, cmap='coolwarm', vmin=-1, vmax=1)
+    plt.title('Product Co-occurrence Correlation Matrix')
     plt.show()
 
 def segment_customers(df_analysis, num_segments=3):
