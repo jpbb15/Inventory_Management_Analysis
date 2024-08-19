@@ -87,11 +87,11 @@ def generate_customer_segments(df_analysis):
     customer_data = df_analysis.groupby('customerid').agg({
         'invoiceno': 'nunique',  # Number of unique invoices (purchase frequency)
         'total_purchase': 'sum'  # Total spending
-    }).rename(columns={'invoiceno': 'purchase_frequency', 'total_spending': 'total_spending'})
+    }).rename(columns={'invoiceno': 'purchase_frequency', 'total_purchase': 'total_spending'})
     
-    # Step 2: Quantile-based segmentation with duplicates='drop'
-    customer_data['spending_segment'] = pd.qcut(customer_data['total_spending'], 4, labels=['Low', 'Medium', 'High', 'Very High'], duplicates='drop')
-    customer_data['frequency_segment'] = pd.qcut(customer_data['purchase_frequency'], 4, labels=['Low', 'Medium', 'High', 'Very High'], duplicates='drop')
+    # Step 2: Manual segmentation with pd.cut()
+    customer_data['spending_segment'] = pd.cut(customer_data['total_spending'], bins=4, labels=['Low', 'Medium', 'High', 'Very High'])
+    customer_data['frequency_segment'] = pd.cut(customer_data['purchase_frequency'], bins=4, labels=['Low', 'Medium', 'High', 'Very High'])
     
     # Step 3: Combine segments to identify high-value customers
     customer_data['overall_segment'] = customer_data['spending_segment'].astype(str) + ' Spending / ' + customer_data['frequency_segment'].astype(str) + ' Frequency'
