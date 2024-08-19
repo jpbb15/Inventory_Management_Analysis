@@ -60,7 +60,7 @@ def plot_line_graph(df_analysis):
     plt.show()
 
 def plot_heatmap(df_analysis):
-    """Plot a heatmap to identify correlations between the top 15 product categories and their purchase amounts."""
+    """Plot a heatmap to identify correlations between the top 15 products based on their purchase amounts."""
     # Calculate total purchase amounts for each product category
     category_totals = df_analysis.groupby('description')['total_purchase'].sum().sort_values(ascending=False)
     
@@ -70,8 +70,9 @@ def plot_heatmap(df_analysis):
     # Filter the dataframe to include only the top 15 products
     top_15_df = df_analysis[df_analysis['description'].isin(top_15_categories)]
     
-    # Pivot the table to get a matrix of purchase amounts by product and country
-    category_sales = top_15_df.pivot_table(index='description', columns='country', values='total_purchase', aggfunc='sum').fillna(0)
+    # Pivot the table to get a matrix of purchase amounts by invoice and product
+    # This assumes each row corresponds to a single purchase event (e.g., an invoice line)
+    category_sales = top_15_df.pivot_table(index='invoiceno', columns='description', values='total_purchase', aggfunc='sum').fillna(0)
     
     # Calculate the correlation matrix for the top 15 products
     correlation_matrix = category_sales.corr()
@@ -79,7 +80,7 @@ def plot_heatmap(df_analysis):
     # Plot the heatmap
     plt.figure(figsize=(12, 8))
     sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1)
-    plt.title('Correlation Between Top 15 Product Categories and Purchase Amounts')
+    plt.title('Correlation Between Top 15 Products Based on Purchase Amounts')
     plt.show()
 
 def segment_customers(df_analysis, num_segments=3):
