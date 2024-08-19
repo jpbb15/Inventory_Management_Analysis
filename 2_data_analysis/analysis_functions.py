@@ -101,10 +101,16 @@ def generate_customer_segments(df_analysis):
 def visualize_customer_segments(customer_data):
     """Visualize customer segments based on spending and frequency."""
     
+    # Ensure spending and frequency segments are categorical for better color separation
+    customer_data['spending_segment'] = customer_data['spending_segment'].astype('category')
+    customer_data['frequency_segment'] = customer_data['frequency_segment'].astype('category')
+    
     # Step 4: Visualize the segments
     plt.figure(figsize=(12, 8))
     sns.scatterplot(data=customer_data, x='purchase_frequency', y='total_spending', hue='overall_segment', palette='coolwarm')
     plt.title('Customer Segmentation Based on Spending and Frequency')
     plt.xlabel('Purchase Frequency')
     plt.ylabel('Total Spending')
+    plt.yscale('log')  # Use log scale if spending values have a wide range
+    plt.xscale('log')  # Use log scale if frequency values have a wide range
     plt.show()
