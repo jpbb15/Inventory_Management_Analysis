@@ -80,21 +80,26 @@ def plot_product_cooccurrence_heatmap(df_analysis):
     plt.title('Top 15 Product Co-occurrence Correlation Matrix')
     plt.show()
 
-def customer_segmentation(df_analysis):
-    """Segment customers based on purchase frequency and total spending."""
+def generate_customer_segments(df_analysis):
+    """Generate customer segments based on purchase frequency and total spending."""
     
     # Step 1: Calculate total spending and purchase frequency for each customer
     customer_data = df_analysis.groupby('customerid').agg({
         'invoiceno': 'nunique',  # Number of unique invoices (purchase frequency)
         'total_purchase': 'sum'  # Total spending
-    }).rename(columns={'invoiceno': 'purchase_frequency', 'total_purchase': 'total_spending'})
+    }).rename(columns={'invoiceno': 'purchase_frequency', 'total_spending': 'total_spending'})
     
-    # Step 2: Quantile-based segmentation
-    customer_data['spending_segment'] = pd.qcut(customer_data['total_spending'], 4, labels=['Low', 'Medium', 'High', 'Very High'])
-    customer_data['frequency_segment'] = pd.qcut(customer_data['purchase_frequency'], 4, labels=['Low', 'Medium', 'High', 'Very High'])
+    # Step 2: Quantile-based segmentation with duplicates='drop'
+    customer_data['spending_segment'] = pd.qcut(customer_data['total_spending'], 4, labels=['Low', 'Medium', 'High', 'Very High'], duplicates='drop')
+    customer_data['frequency_segment'] = pd.qcut(customer_data['purchase_frequency'], 4, labels=['Low', 'Medium', 'High', 'Very High'], duplicates='drop')
     
     # Step 3: Combine segments to identify high-value customers
     customer_data['overall_segment'] = customer_data['spending_segment'].astype(str) + ' Spending / ' + customer_data['frequency_segment'].astype(str) + ' Frequency'
+    
+    return customer_data
+
+def visualize_customer_segments(customer_data):
+    """Visualize customer segments based on spending and frequency."""
     
     # Step 4: Visualize the segments
     plt.figure(figsize=(12, 8))
@@ -103,11 +108,3 @@ def customer_segmentation(df_analysis):
     plt.xlabel('Purchase Frequency')
     plt.ylabel('Total Spending')
     plt.show()
-    
-    return customer_data
-
-def analyze_seasonal_trends(df_analysis):
-    """Investigate if certain product categories are more popular during specific times of the year."""
-    df_analysis['month'] = pd.to_datetime(df_analysis['invoicedate']).dt.month
-    seasonal_trends = df_analysis.groupby(['month', 'description'])['total_purchase'].sum().unstack().fillna(0)
-    return seasonal_trends
