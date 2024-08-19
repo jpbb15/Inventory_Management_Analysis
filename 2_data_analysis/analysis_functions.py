@@ -80,15 +80,31 @@ def plot_product_cooccurrence_heatmap(df_analysis):
     plt.title('Top 15 Product Co-occurrence Correlation Matrix')
     plt.show()
 
-# Usage:
-# plot_product_cooccurrence_heatmap(df_analysis)
-
-
-def segment_customers(df_analysis, num_segments=3):
-    """Segment customers based on their total spending."""
-    customer_totals = df_analysis.groupby('customerid')['total_purchase'].sum()
-    customer_segments = pd.qcut(customer_totals, num_segments, labels=[f'Segment {i+1}' for i in range(num_segments)])
-    return customer_segments.value_counts()
+def customer_segmentation(df_analysis):
+    """Segment customers based on purchase frequency and total spending."""
+    
+    # Step 1: Calculate total spending and purchase frequency for each customer
+    customer_data = df_analysis.groupby('customerid').agg({
+        'invoiceno': 'nunique',  # Number of unique invoices (purchase frequency)
+        'total_purchase': 'sum'  # Total spending
+    }).rename(columns={'invoiceno': 'purchase_frequency', 'total_purchase': 'total_spending'})
+    
+    # Step 2: Quantile-based segmentation
+    customer_data['spending_segment'] = pd.qcut(customer_data['total_spending'], 4, labels=['Low', 'Medium', 'High', 'Very High'])
+    customer_data['frequency_segment'] = pd.qcut(customer_data['purchase_frequency'], 4, labels=['Low', 'Medium', 'High', 'Very High'])
+    
+    # Step 3: Combine segments to identify high-value customers
+    customer_data['overall_segment'] = customer_data['spending_segment'].astype(str) + ' Spending / ' + customer_data['frequency_segment'].astype(str) + ' Frequency'
+    
+    # Step 4: Visualize the segments
+    plt.figure(figsize=(12, 8))
+    sns.scatterplot(data=customer_data, x='purchase_frequency', y='total_spending', hue='overall_segment', palette='coolwarm')
+    plt.title('Customer Segmentation Based on Spending and Frequency')
+    plt.xlabel('Purchase Frequency')
+    plt.ylabel('Total Spending')
+    plt.show()
+    
+    return customer_data
 
 def analyze_seasonal_trends(df_analysis):
     """Investigate if certain product categories are more popular during specific times of the year."""
