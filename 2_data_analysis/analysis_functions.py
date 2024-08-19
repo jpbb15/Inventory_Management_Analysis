@@ -59,10 +59,19 @@ def plot_line_graph(df_analysis):
     plt.xlabel('Month')
     plt.show()
 
+import seaborn as sns
+import matplotlib.pyplot as plt
+
 def plot_product_cooccurrence_heatmap(df_analysis):
-    """Plot a heatmap to identify the co-occurrence of product purchases."""
+    """Plot a heatmap to identify the co-occurrence of top 15 product purchases."""
+    # Calculate the total quantity sold for each product
+    top_products = df_analysis.groupby('description')['quantity'].sum().sort_values(ascending=False).head(15).index
+    
+    # Filter the dataframe to include only the top 15 products
+    top_15_df = df_analysis[df_analysis['description'].isin(top_products)]
+    
     # Pivot table to create a binary matrix of products purchased per transaction (invoice)
-    cooccurrence_matrix = df_analysis.pivot_table(index='invoiceno', columns='description', values='quantity', aggfunc='sum').fillna(0)
+    cooccurrence_matrix = top_15_df.pivot_table(index='invoiceno', columns='description', values='quantity', aggfunc='sum').fillna(0)
     cooccurrence_matrix = cooccurrence_matrix.applymap(lambda x: 1 if x > 0 else 0)
     
     # Calculate the correlation matrix of product co-occurrence
@@ -70,9 +79,13 @@ def plot_product_cooccurrence_heatmap(df_analysis):
     
     # Plot the heatmap
     plt.figure(figsize=(14, 10))
-    sns.heatmap(correlation_matrix, annot=False, cmap='coolwarm', vmin=-1, vmax=1)
-    plt.title('Product Co-occurrence Correlation Matrix')
+    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1)
+    plt.title('Top 15 Product Co-occurrence Correlation Matrix')
     plt.show()
+
+# Usage:
+# plot_product_cooccurrence_heatmap(df_analysis)
+
 
 def segment_customers(df_analysis, num_segments=3):
     """Segment customers based on their total spending."""
