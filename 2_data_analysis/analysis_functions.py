@@ -59,9 +59,6 @@ def plot_line_graph(df_analysis):
     plt.xlabel('Month')
     plt.show()
 
-import seaborn as sns
-import matplotlib.pyplot as plt
-
 def plot_product_cooccurrence_heatmap(df_analysis):
     """Plot a heatmap to identify the co-occurrence of top 15 product purchases."""
     # Calculate the total quantity sold for each product
