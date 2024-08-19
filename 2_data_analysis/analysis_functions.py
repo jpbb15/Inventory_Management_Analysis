@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib.ticker import FuncFormatter
 
 def calculate_purchase_amount(df_analysis):
     """Calculate the total purchase amount for each row."""
@@ -43,13 +44,18 @@ def plot_bar_chart(df_analysis):
     plt.show()
 
 def plot_line_graph(df_analysis):
-    """Plot a line graph to visualize sales trends over time."""
+    """Plot a line graph to visualize sales trends over time with a readable y-axis scale."""
     df_analysis['month'] = pd.to_datetime(df_analysis['invoicedate']).dt.to_period('M')
     monthly_sales = df_analysis.groupby('month')['total_purchase'].sum()
+    
     plt.figure(figsize=(10, 6))
-    monthly_sales.plot(kind='line')
+    ax = monthly_sales.plot(kind='line')
+    
+    # Customize y-axis to show values in millions
+    ax.yaxis.set_major_formatter(FuncFormatter(lambda x, _: f'{x/1e6:.1f}M'))
+    
     plt.title('Monthly Sales Trends')
-    plt.ylabel('Total Sales')
+    plt.ylabel('Total Sales (in Millions)')
     plt.xlabel('Month')
     plt.show()
 
