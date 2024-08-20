@@ -221,9 +221,10 @@ def assign_time_of_day(df_analysis):
     df_analysis['time_of_day'] = pd.cut(df_analysis['invoicedate'].dt.hour, bins=bins, labels=labels, right=False, include_lowest=True)
     return df_analysis
 
-def aggregate_sales_by_time_of_day(df_analysis, category_name):
-    """Aggregates sales for a specific product category by time of day."""
-    sales_by_time = df_analysis[df_analysis['description'] == category_name].groupby('time_of_day')['quantity'].sum()
+def aggregate_sales_by_time_of_day_overall(df_analysis):
+    """Aggregates overall sales by time of day."""
+    df_analysis['total_spending'] = df_analysis['quantity'] * df_analysis['unitprice']
+    sales_by_time = df_analysis.groupby('time_of_day')['total_spending'].sum()
     return sales_by_time
 
 def anova_test_sales_by_time_of_day(sales_by_time):
@@ -232,12 +233,12 @@ def anova_test_sales_by_time_of_day(sales_by_time):
     f_stat, p_value = stats.f_oneway(*sales_values)
     return f_stat, p_value
 
-def plot_sales_by_time_of_day(sales_by_time, category_name):
-    """Plots sales for a specific product category by time of day."""
+def plot_sales_by_time_of_day(sales_by_time):
+    """Plots overall sales by time of day."""
     plt.figure(figsize=(10, 6))
     sales_by_time.plot(kind='bar', color='skyblue')
-    plt.title(f'Sales by Time of Day for {category_name}')
+    plt.title('Overall Sales by Time of Day')
     plt.xlabel('Time of Day')
-    plt.ylabel('Total Quantity Sold')
+    plt.ylabel('Total Sales (Revenue)')
     plt.grid(True)
     plt.show()
