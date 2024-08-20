@@ -65,6 +65,49 @@ def select_features(df_manipulation):
     
     return df_selected
 
+def one_hot_encode(df_manipulation):
+    """Applies one-hot encoding to the product categories."""
+    df_encoded = pd.get_dummies(df_manipulation, columns=['description'], prefix='category')
+    return df_encoded
+
+def extract_date_features(df_manipulation):
+    """Extracts useful features from the invoicedate, including year, month, and day."""
+    df_manipulation['year'] = df_manipulation['invoicedate'].dt.year
+    df_manipulation['month'] = df_manipulation['invoicedate'].dt.month
+    df_manipulation['day'] = df_manipulation['invoicedate'].dt.day
+    df_manipulation['day_of_week'] = df_manipulation['invoicedate'].dt.dayofweek
+    return df_manipulation
+
+def correlation_analysis(df_manipulation):
+    """Performs a correlation analysis between numerical features and visualizes the results."""
+    # Compute the correlation matrix
+    correlation_matrix = df_manipulation.corr()
+    
+    # Visualize the correlation matrix using a heatmap
+    plt.figure(figsize=(14, 10))
+    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt='.2f', linewidths=0.5)
+    plt.title("Correlation Matrix")
+    plt.show()
+    
+    return correlation_matrix
+
+def group_analysis(df_manipulation, group_by_column, analysis_column):
+    """Performs a group-wise analysis to understand customer behavior."""
+    # Perform group-wise analysis and compute descriptive statistics
+    group_data = df_manipulation.groupby(group_by_column)[analysis_column].describe()
+    
+    # Display the results
+    print(f"Group-wise analysis of {analysis_column} by {group_by_column}:")
+    print(group_data)
+    
+    # Optionally, visualize the distribution of the analysis_column within each group
+    plt.figure(figsize=(12, 6))
+    sns.boxplot(x=group_by_column, y=analysis_column, data=df_manipulation)
+    plt.title(f'Distribution of {analysis_column} by {group_by_column}')
+    plt.show()
+    
+    return group_data
+
 def save_manipulated_data(df_selected, output_file='data_manipulated.csv'):
     """Saves the manipulated data to a CSV file and prints a confirmation message."""
     df_selected.to_csv(output_file, index=False)
