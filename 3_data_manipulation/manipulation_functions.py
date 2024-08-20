@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 def identify_outliers(df, column):
     """Identify outliers in a specified column using the IQR method."""
