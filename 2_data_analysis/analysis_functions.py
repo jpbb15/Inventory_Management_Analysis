@@ -161,25 +161,13 @@ def extract_date_features(df_analysis):
 
 def aggregate_sales_by_day_type(df_analysis, category_name):
     """Aggregates sales for a specific product category by weekday and weekend."""
-    sales_weekday = df_analysis[(df_analysis['description'] == category_name) & (df_analysis['is_weekend'] == 0)]['quantity'].sum()
-    sales_weekend = df_analysis[(df_analysis['description'] == category_name) & (df_analysis['is_weekend'] == 1)]['quantity'].sum()
+    sales_weekday = df_analysis[(df_analysis['description'] == category_name) & (df_analysis['is_weekend'] == 0)].groupby('invoicedate')['quantity'].sum()
+    sales_weekend = df_analysis[(df_analysis['description'] == category_name) & (df_analysis['is_weekend'] == 1)].groupby('invoicedate')['quantity'].sum()
     return sales_weekday, sales_weekend
-
-def compare_discounted_vs_regular_sales(df_analysis, category_name):
-    """Compares sales of a product when it is discounted versus when it is sold at the regular price."""
-    avg_price = df_analysis[df_analysis['description'] == category_name]['unitprice'].mean()
-    sales_discounted = df_analysis[(df_analysis['description'] == category_name) & (df_analysis['unitprice'] < avg_price)]['quantity'].sum()
-    sales_regular = df_analysis[(df_analysis['description'] == category_name) & (df_analysis['unitprice'] >= avg_price)]['quantity'].sum()
-    return sales_discounted, sales_regular
 
 def t_test_weekday_vs_weekend(sales_weekday, sales_weekend):
     """Performs a t-test to compare sales between weekdays and weekends."""
-    t_stat, p_value = stats.ttest_ind([sales_weekday], [sales_weekend], equal_var=False)
-    return t_stat, p_value
-
-def t_test_discounted_vs_regular(sales_discounted, sales_regular):
-    """Performs a t-test to compare sales between discounted and regular prices."""
-    t_stat, p_value = stats.ttest_ind([sales_discounted], [sales_regular], equal_var=False)
+    t_stat, p_value = stats.ttest_ind(sales_weekday, sales_weekend, equal_var=False)
     return t_stat, p_value
 
 def plot_sales_by_day_type(df_analysis, category_name):
@@ -192,22 +180,5 @@ def plot_sales_by_day_type(df_analysis, category_name):
     plt.xlabel('Day of Week (0=Monday, 6=Sunday)')
     plt.ylabel('Total Quantity Sold')
     plt.xticks(ticks=range(7), labels=['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])
-    plt.grid(True)
-    plt.show()
-
-def plot_discounted_vs_regular_sales(df_analysis, category_name):
-    """Plots sales for a product when it is discounted vs. regular price."""
-    avg_price = df_analysis[df_analysis['description'] == category_name]['unitprice'].mean()
-    
-    sales_data = df_analysis[df_analysis['description'] == category_name].copy()
-    sales_data['Price Category'] = sales_data['unitprice'].apply(lambda x: 'Discounted' if x < avg_price else 'Regular')
-    
-    sales_summary = sales_data.groupby('Price Category')['quantity'].sum()
-    
-    plt.figure(figsize=(8, 6))
-    sales_summary.plot(kind='bar', color=['green', 'red'])
-    plt.title(f'Sales for {category_name} - Discounted vs Regular Price')
-    plt.xlabel('Price Category')
-    plt.ylabel('Total Quantity Sold')
     plt.grid(True)
     plt.show()
