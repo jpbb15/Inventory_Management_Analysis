@@ -216,8 +216,17 @@ def plot_discounted_vs_regular_sales(df_analysis, category_name):
 
 def assign_season(df_analysis):
     """Assigns a season to each row based on the month."""
-    df_analysis['season'] = df_analysis['invoicedate'].dt.month % 12 // 3 + 1
-    df_analysis['season'] = df_analysis['season'].map({1: 'Winter', 2: 'Spring', 3: 'Summer', 4: 'Autumn'})
+    # Define the mapping of months to seasons
+    season_mapping = {
+        12: 'Winter', 1: 'Winter', 2: 'Winter',
+        3: 'Spring', 4: 'Spring', 5: 'Spring',
+        6: 'Summer', 7: 'Summer', 8: 'Summer',
+        9: 'Autumn', 10: 'Autumn', 11: 'Autumn'
+    }
+    
+    # Create the 'season' column based on the 'invoicedate' month
+    df_analysis['season'] = df_analysis['invoicedate'].dt.month.map(season_mapping)
+    
     return df_analysis
 
 def aggregate_sales_by_season(df_analysis, category_name):
