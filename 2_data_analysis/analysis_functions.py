@@ -214,38 +214,30 @@ def plot_discounted_vs_regular_sales(df_analysis, category_name):
     plt.grid(True)
     plt.show()
 
-def assign_season(df_analysis):
-    """Assigns a season to each row based on the month."""
-    # Define the mapping of months to seasons
-    season_mapping = {
-        12: 'Winter', 1: 'Winter', 2: 'Winter',
-        3: 'Spring', 4: 'Spring', 5: 'Spring',
-        6: 'Summer', 7: 'Summer', 8: 'Summer',
-        9: 'Autumn', 10: 'Autumn', 11: 'Autumn'
-    }
-    
-    # Create the 'season' column based on the 'invoicedate' month
-    df_analysis['season'] = df_analysis['invoicedate'].dt.month.map(season_mapping)
-    
+def assign_time_of_day(df_analysis):
+    """Assigns a time of day category to each transaction based on the hour."""
+    bins = [0, 6, 12, 18, 24]
+    labels = ['Night', 'Morning', 'Afternoon', 'Evening']
+    df_analysis['time_of_day'] = pd.cut(df_analysis['invoicedate'].dt.hour, bins=bins, labels=labels, right=False, include_lowest=True)
     return df_analysis
 
-def aggregate_sales_by_season(df_analysis, category_name):
-    """Aggregates sales for a specific product category by season."""
-    sales_by_season = df_analysis[df_analysis['description'] == category_name].groupby('season')['quantity'].sum()
-    return sales_by_season
+def aggregate_sales_by_time_of_day(df_analysis, category_name):
+    """Aggregates sales for a specific product category by time of day."""
+    sales_by_time = df_analysis[df_analysis['description'] == category_name].groupby('time_of_day')['quantity'].sum()
+    return sales_by_time
 
-def anova_test_sales_by_season(sales_by_season):
-    """Performs an ANOVA test to compare sales between seasons."""
-    sales_values = [group for season, group in sales_by_season.groupby(sales_by_season.index)]
+def anova_test_sales_by_time_of_day(sales_by_time):
+    """Performs an ANOVA test to compare sales between different times of day."""
+    sales_values = [group for time, group in sales_by_time.groupby(sales_by_time.index)]
     f_stat, p_value = stats.f_oneway(*sales_values)
     return f_stat, p_value
 
-def plot_sales_by_season(sales_by_season, category_name):
-    """Plots sales for a specific product category by season."""
+def plot_sales_by_time_of_day(sales_by_time, category_name):
+    """Plots sales for a specific product category by time of day."""
     plt.figure(figsize=(10, 6))
-    sales_by_season.plot(kind='bar', color='teal')
-    plt.title(f'Sales by Season for {category_name}')
-    plt.xlabel('Season')
+    sales_by_time.plot(kind='bar', color='skyblue')
+    plt.title(f'Sales by Time of Day for {category_name}')
+    plt.xlabel('Time of Day')
     plt.ylabel('Total Quantity Sold')
     plt.grid(True)
     plt.show()
