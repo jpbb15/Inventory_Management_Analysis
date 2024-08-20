@@ -214,32 +214,36 @@ def plot_discounted_vs_regular_sales(df_analysis, category_name):
     plt.grid(True)
     plt.show()
 
-def assign_time_of_day_simple(df_analysis):
-    """Assigns a simple time of day category (Morning, Afternoon) to each transaction based on the hour."""
-    bins = [0, 12, 18, 24]
-    labels = ['Morning', 'Afternoon', 'Evening']
-    df_analysis['time_of_day'] = pd.cut(df_analysis['invoicedate'].dt.hour, bins=bins, labels=labels, right=False, include_lowest=True)
+def assign_season(df_analysis):
+    """Assigns a season to each transaction based on the transaction date."""
+    season_mapping = {
+        12: 'Winter', 1: 'Winter', 2: 'Winter',
+        3: 'Spring', 4: 'Spring', 5: 'Spring',
+        6: 'Summer', 7: 'Summer', 8: 'Summer',
+        9: 'Autumn', 10: 'Autumn', 11: 'Autumn'
+    }
+    df_analysis['season'] = df_analysis['invoicedate'].dt.month.map(season_mapping)
     return df_analysis
 
-def aggregate_sales_by_simple_time_of_day(df_analysis):
-    """Aggregates total sales (revenue) by simple time of day (Morning, Afternoon)."""
-    df_analysis['total_spending'] = df_analysis['quantity'] * df_analysis['unitprice']
-    sales_by_time = df_analysis.groupby('time_of_day')['total_spending'].sum()
-    return sales_by_time
+def aggregate_sales_by_season(df_analysis):
+    """Aggregates total quantity sold for each product category within each season."""
+    sales_by_season = df_analysis.groupby(['season', 'description'])['quantity'].sum().unstack(fill_value=0)
+    return sales_by_season
 
-def t_test_sales_by_simple_time_of_day(sales_by_time):
-    """Performs a two-sample t-test to compare sales between two times of day."""
-    sales_morning = sales_by_time.get('Morning', 0)
-    sales_afternoon = sales_by_time.get('Afternoon', 0)
-    t_stat, p_value = stats.ttest_ind([sales_morning], [sales_afternoon], equal_var=False)
-    return t_stat, p_value
+def anova_test_sales_by_season(sales_by_season):
+    """Performs an ANOVA test to compare sales across seasons."""
+    sales_values = [sales_by_season[season] for season in sales_by_season.index.unique()]
+    f_stat, p_value = stats.f_oneway(*sales_values)
+    return f_stat, p_value
 
-def plot_simple_sales_by_time_of_day(sales_by_time):
-    """Plots sales by simple time of day (Morning, Afternoon)."""
-    plt.figure(figsize=(8, 6))
-    sales_by_time.plot(kind='bar', color='coral')
-    plt.title('Sales by Time of Day (Morning vs. Afternoon)')
-    plt.xlabel('Time of Day')
-    plt.ylabel('Total Sales (Revenue)')
+def plot_sales_by_season(sales_by_season):
+    """Plots the total quantity sold for each product category by season."""
+    sales_by_season.T.plot(kind='bar', figsize=(14, 8), stacked=True, colormap='viridis')
+    
+    plt.title('Product Category Sales by Season')
+    plt.xlabel('Product Category')
+    plt.ylabel('Total Quantity Sold')
+    plt.xticks(rotation=90)
+    plt.legend(title='Season', bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.grid(True)
     plt.show()
