@@ -214,24 +214,29 @@ def plot_discounted_vs_regular_sales(df_analysis, category_name):
     plt.grid(True)
     plt.show()
 
-def aggregate_sales_by_country(df_analysis, category_name):
-    """Aggregates sales for a specific product category by country."""
-    sales_by_country = df_analysis[df_analysis['description'] == category_name].groupby('country')['quantity'].sum()
-    return sales_by_country
+def assign_season(df_analysis):
+    """Assigns a season to each row based on the month."""
+    df_analysis['season'] = df_analysis['invoicedate'].dt.month % 12 // 3 + 1
+    df_analysis['season'] = df_analysis['season'].map({1: 'Winter', 2: 'Spring', 3: 'Summer', 4: 'Autumn'})
+    return df_analysis
 
-def anova_test_sales_by_country(sales_by_country):
-    """Performs an ANOVA test to compare sales between countries."""
-    sales_values = [group for country, group in sales_by_country.groupby(sales_by_country.index)]
+def aggregate_sales_by_season(df_analysis, category_name):
+    """Aggregates sales for a specific product category by season."""
+    sales_by_season = df_analysis[df_analysis['description'] == category_name].groupby('season')['quantity'].sum()
+    return sales_by_season
+
+def anova_test_sales_by_season(sales_by_season):
+    """Performs an ANOVA test to compare sales between seasons."""
+    sales_values = [group for season, group in sales_by_season.groupby(sales_by_season.index)]
     f_stat, p_value = stats.f_oneway(*sales_values)
     return f_stat, p_value
 
-def plot_sales_by_country(sales_by_country, category_name):
-    """Plots sales for a specific product category by country."""
-    plt.figure(figsize=(12, 8))
-    sales_by_country.plot(kind='bar', color='purple')
-    plt.title(f'Sales by Country for {category_name}')
-    plt.xlabel('Country')
+def plot_sales_by_season(sales_by_season, category_name):
+    """Plots sales for a specific product category by season."""
+    plt.figure(figsize=(10, 6))
+    sales_by_season.plot(kind='bar', color='teal')
+    plt.title(f'Sales by Season for {category_name}')
+    plt.xlabel('Season')
     plt.ylabel('Total Quantity Sold')
-    plt.xticks(rotation=90)
     plt.grid(True)
     plt.show()
