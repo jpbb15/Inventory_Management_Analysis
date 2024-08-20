@@ -24,3 +24,16 @@ def cap_outliers(df, column):
     df[column] = np.where(df[column] < lower_bound, lower_bound, df[column])
     
     return df
+
+def visualize_outliers(df, column):
+    """Visualize the distribution of a column with outliers highlighted."""
+    plt.figure(figsize=(12, 6))
+    
+    # Plot the distribution of the column
+    sns.boxplot(x=df[column])
+    
+    # Add titles and labels
+    plt.title(f'Boxplot of {column} with Outliers Highlighted')
+    plt.xlabel(column)
+    
+    plt.show()
