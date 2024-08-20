@@ -39,3 +39,33 @@ def visualize_outliers(df, column):
     plt.xlabel(column)
     
     plt.show()
+
+def type_casting(df_manipulation):
+    """Ensures all fields are in the correct format."""
+    
+    # Convert 'invoicedate' to datetime if not already done
+    df_manipulation['invoicedate'] = pd.to_datetime(df_manipulation['invoicedate'])
+    
+    # Ensure 'quantity' and 'unitprice' are floats
+    df_manipulation['quantity'] = df_manipulation['quantity'].astype(float)
+    df_manipulation['unitprice'] = df_manipulation['unitprice'].astype(float)
+    
+    return df_manipulation
+
+def select_features(df_manipulation):
+    """Selects the relevant features for analysis based on project objectives."""
+    
+    # Define the relevant features to keep
+    features = ['invoicedate', 'customerid', 'description', 'quantity', 'unitprice', 'total_purchase', 'country']
+    
+    # Check if all features are available in the dataframe, if not, drop the unavailable ones
+    features = [feature for feature in features if feature in df_manipulation.columns]
+    
+    df_selected = df_manipulation[features]
+    
+    return df_selected
+
+def save_manipulated_data(df_selected, output_file='data_manipulated.csv'):
+    """Saves the manipulated data to a CSV file and prints a confirmation message."""
+    df_selected.to_csv(output_file, index=False)
+    print(f"Data manipulation completed and saved to {output_file}.")
