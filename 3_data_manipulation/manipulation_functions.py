@@ -80,8 +80,16 @@ def extract_date_features(df_manipulation):
 
 def correlation_analysis(df_manipulation):
     """Performs a correlation analysis between numerical features and visualizes the results."""
+    
+    # Drop non-numeric or irrelevant columns before correlation analysis
+    columns_to_exclude = ['customerid', 'invoicedate']
+    df_numerical = df_manipulation.drop(columns=columns_to_exclude, errors='ignore')
+    
+    # Ensure only numerical columns are kept
+    df_numerical = df_numerical.select_dtypes(include=[np.number])
+    
     # Compute the correlation matrix
-    correlation_matrix = df_manipulation.corr()
+    correlation_matrix = df_numerical.corr()
     
     # Visualize the correlation matrix using a heatmap
     plt.figure(figsize=(14, 10))
