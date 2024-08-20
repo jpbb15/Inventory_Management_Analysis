@@ -214,30 +214,31 @@ def plot_discounted_vs_regular_sales(df_analysis, category_name):
     plt.grid(True)
     plt.show()
 
-def assign_time_of_day(df_analysis):
-    """Assigns a time of day category to each transaction based on the hour."""
-    bins = [0, 6, 12, 18, 24]
-    labels = ['Night', 'Morning', 'Afternoon', 'Evening']
+def assign_time_of_day_simple(df_analysis):
+    """Assigns a simple time of day category (Morning, Afternoon) to each transaction based on the hour."""
+    bins = [0, 12, 18, 24]
+    labels = ['Morning', 'Afternoon', 'Evening']
     df_analysis['time_of_day'] = pd.cut(df_analysis['invoicedate'].dt.hour, bins=bins, labels=labels, right=False, include_lowest=True)
     return df_analysis
 
-def aggregate_sales_by_time_of_day_overall(df_analysis):
-    """Aggregates overall sales by time of day."""
+def aggregate_sales_by_simple_time_of_day(df_analysis):
+    """Aggregates total sales (revenue) by simple time of day (Morning, Afternoon)."""
     df_analysis['total_spending'] = df_analysis['quantity'] * df_analysis['unitprice']
     sales_by_time = df_analysis.groupby('time_of_day')['total_spending'].sum()
     return sales_by_time
 
-def anova_test_sales_by_time_of_day(sales_by_time):
-    """Performs an ANOVA test to compare sales between different times of day."""
-    sales_values = [group for time, group in sales_by_time.groupby(sales_by_time.index)]
-    f_stat, p_value = stats.f_oneway(*sales_values)
-    return f_stat, p_value
+def t_test_sales_by_simple_time_of_day(sales_by_time):
+    """Performs a two-sample t-test to compare sales between two times of day."""
+    sales_morning = sales_by_time.get('Morning', 0)
+    sales_afternoon = sales_by_time.get('Afternoon', 0)
+    t_stat, p_value = stats.ttest_ind([sales_morning], [sales_afternoon], equal_var=False)
+    return t_stat, p_value
 
-def plot_sales_by_time_of_day(sales_by_time):
-    """Plots overall sales by time of day."""
-    plt.figure(figsize=(10, 6))
-    sales_by_time.plot(kind='bar', color='skyblue')
-    plt.title('Overall Sales by Time of Day')
+def plot_simple_sales_by_time_of_day(sales_by_time):
+    """Plots sales by simple time of day (Morning, Afternoon)."""
+    plt.figure(figsize=(8, 6))
+    sales_by_time.plot(kind='bar', color='coral')
+    plt.title('Sales by Time of Day (Morning vs. Afternoon)')
     plt.xlabel('Time of Day')
     plt.ylabel('Total Sales (Revenue)')
     plt.grid(True)
