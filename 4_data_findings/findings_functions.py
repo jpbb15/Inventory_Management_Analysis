@@ -2,57 +2,54 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def plot_top_selling_categories(df, top_n=10):
-    """Plot the top N selling product categories based on total sales."""
-    category_totals = df.groupby('description')['total_purchase'].sum().sort_values(ascending=False).head(top_n)
-    plt.figure(figsize=(12, 6))
-    category_totals.plot(kind='bar', color='skyblue')
-    plt.title(f'Top {top_n} Selling Product Categories')
-    plt.ylabel('Total Sales Amount')
-    plt.xlabel('Product Category')
-    plt.xticks(rotation=45, ha='right')
-    plt.show()
+def load_data(file_path):
+    """
+    Load the dataset from a CSV file.
+    """
+    data = pd.read_csv(file_path)
+    data['invoicedate'] = pd.to_datetime(data['invoicedate'])
+    data['month_year'] = data['invoicedate'].dt.to_period('M')
+    return data
 
-def plot_monthly_sales_trends(df):
-    """Plot monthly sales trends over time."""
-    df['month_year'] = pd.to_datetime(df['invoicedate']).dt.to_period('M')
-    monthly_sales = df.groupby('month_year')['total_purchase'].sum()
-    plt.figure(figsize=(12, 6))
-    monthly_sales.plot(kind='line', marker='o', color='blue')
-    plt.title('Monthly Sales Trends')
-    plt.ylabel('Total Sales Amount')
+def plot_monthly_sales_trend(data):
+    """
+    Plot the monthly sales trend.
+    """
+    monthly_sales = data.groupby('month_year')['total_purchase'].sum().reset_index()
+    monthly_sales['month_year'] = monthly_sales['month_year'].astype(str)
+
+    plt.figure(figsize=(10, 6))
+    sns.lineplot(x='month_year', y='total_purchase', data=monthly_sales, marker='o')
+    plt.title('Monthly Sales Trend')
     plt.xlabel('Month-Year')
+    plt.ylabel('Total Purchase ($)')
     plt.xticks(rotation=45)
-    plt.grid(True)
+    plt.tight_layout()
     plt.show()
 
-def plot_customer_segment_boxplot(df):
-    """Plot the distribution of total purchases across different customer segments."""
-    plt.figure(figsize=(12, 6))
-    sns.boxplot(x='purchase_frequency_segment', y='total_purchase', data=df, palette='coolwarm')
-    plt.title('Distribution of Total Purchases by Customer Segment')
-    plt.xlabel('Customer Segment')
-    plt.ylabel('Total Purchase Amount')
+def plot_customer_purchase_frequency(data):
+    """
+    Plot the customer purchase frequency.
+    """
+    customer_freq = data['customerid'].value_counts().reset_index()
+    customer_freq.columns = ['customerid', 'purchase_count']
+
+    plt.figure(figsize=(10, 6))
+    sns.histplot(customer_freq['purchase_count'], bins=50, kde=True)
+    plt.title('Customer Purchase Frequency')
+    plt.xlabel('Number of Purchases')
+    plt.ylabel('Number of Customers')
+    plt.tight_layout()
     plt.show()
 
-def plot_sales_by_day_of_week(df):
-    """Plot total sales by day of the week."""
-    sales_by_day = df.groupby('day_of_week')['total_purchase'].sum()
-    plt.figure(figsize=(10, 5))
-    sales_by_day.plot(kind='bar', color='orange')
-    plt.title('Sales by Day of the Week')
-    plt.ylabel('Total Sales Amount')
-    plt.xlabel('Day of the Week')
-    plt.xticks(rotation=0)
+def plot_quantity_distribution(data):
+    """
+    Plot the distribution of purchase quantities.
+    """
+    plt.figure(figsize=(10, 6))
+    sns.histplot(data['quantity'], bins=50, kde=True)
+    plt.title('Distribution of Purchase Quantities')
+    plt.xlabel('Quantity')
+    plt.ylabel('Frequency')
+    plt.tight_layout()
     plt.show()
-
-def statistical_summary(df):
-    """Print a statistical summary of key features in the dataset."""
-    print("Statistical Summary of Key Features")
-    print(df.describe())
-    
-    # Example: Group-wise analysis summary if available
-    if 'purchase_frequency_segment' in df.columns:
-        print("\nGroup-wise analysis of total_purchase by purchase_frequency_segment:")
-        print(df.groupby('purchase_frequency_segment')['total_purchase'].describe())
-
