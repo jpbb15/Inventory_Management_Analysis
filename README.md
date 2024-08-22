@@ -61,6 +61,7 @@ SQL Queries to some analysis as well.
 ## Tableau Visualization
 
 - Dashboard Creation displaying key information
+- [Tableau Visualizations](https://public.tableau.com/app/profile/jose.pedro.brandao/vizzes)
 
 ## Technologies Used
 
