@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8' ?>
 
 <!-- build 20242.24.0711.1636                               -->
-<workbook original-version='18.1' source-build='2024.2.1 (20242.24.0711.1636)' source-platform='win' version='18.1' xmlns:user='http://www.tableausoftware.com/xml/user'>
+<workbook original-version='18.1' source-build='2024.2.1 (20242.24.0711.1636)' source-platform='win' version='18.1' xml:base='https://public.tableau.com' xmlns:user='http://www.tableausoftware.com/xml/user'>
   <document-format-change-manifest>
     <_.fcp.AccessibleZoneTabOrder.true...AccessibleZoneTabOrder />
     <_.fcp.AnimationOnByDefault.true...AnimationOnByDefault />
@@ -18,6 +18,7 @@
     <WindowsPersistSimpleIdentifiers />
     <WorksheetBackgroundTransparency />
   </document-format-change-manifest>
+  <repository-location id='final_project_17243423925090' path='/workbooks' revision='1.0' />
   <preferences>
     <preference name='ui.encoding.shelf.height' value='24' />
     <preference name='ui.shelf.height' value='26' />
@@ -32,7 +33,7 @@
       <connection class='federated'>
         <named-connections>
           <named-connection caption='data_cleaned' name='textscan.0x5nhy21sfqie210weako0ddqedy'>
-            <connection class='textscan' directory='C:/Users/USER/Documents/GitHub/project_final/1_data_cleaning' filename='data_cleaned.csv' password='' server='' />
+            <connection class='textscan' directory='C:/Users/USER/Documents/GitHub/project_final/1_data_cleaning' filename='data_cleaned.csv' password='' server='' workgroup-auth-mode='as-is' />
           </named-connection>
         </named-connections>
         <_.fcp.ObjectModelEncapsulateLegacy.false...relation connection='textscan.0x5nhy21sfqie210weako0ddqedy' name='data_cleaned.csv' table='[data_cleaned#csv]' type='table'>
@@ -215,7 +216,7 @@
         </groupfilter>
       </group>
       <extract _.fcp.ObjectModelExtractV2.true...object-id='' _.fcp.VConnDownstreamExtractsWithWarnings.true...user-specific='false' count='-1' enabled='true' units='records'>
-        <connection access_mode='readonly' author-locale='pt_BR' class='hyper' dbname='C:/Users/USER/AppData/Local/Temp/TableauTemp/#TableauTemp_07a1idz1isv12r1eneugc1t0jvbp.hyper' default-settings='hyper' schema='Extract' sslmode='' tablename='Extract' update-time='08/22/2024 01:15:25 PM' username='tableau_internal_user'>
+        <connection access_mode='readonly' author-locale='pt_BR' class='hyper' dbname='C:/Users/USER/AppData/Local/Temp/TableauTemp/#TableauTemp_07a1idz1isv12r1eneugc1t0jvbp.hyper' default-settings='hyper' schema='Extract' sslmode='' tablename='Extract' update-time='' username='tableau_internal_user'>
           <_.fcp.ObjectModelEncapsulateLegacy.false...relation name='Extract' table='[Extract].[Extract]' type='table' />
           <_.fcp.ObjectModelEncapsulateLegacy.true...relation name='Extract' table='[Extract].[Extract]' type='table' />
           <metadata-records>
@@ -231,7 +232,6 @@
               <aggregation>Sum</aggregation>
               <approx-count>45948</approx-count>
               <contains-null>true</contains-null>
-              <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[data_cleaned.csv_82251B7EA3544BCDA02BA9CC396D606C]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>stockcode</remote-name>
@@ -246,7 +246,6 @@
               <approx-count>11810</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LPT_RPT' />
-              <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[data_cleaned.csv_82251B7EA3544BCDA02BA9CC396D606C]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>description</remote-name>
@@ -261,7 +260,6 @@
               <approx-count>11767</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LPT_RPT' />
-              <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[data_cleaned.csv_82251B7EA3544BCDA02BA9CC396D606C]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>quantity</remote-name>
@@ -275,7 +273,6 @@
               <aggregation>Sum</aggregation>
               <approx-count>397</approx-count>
               <contains-null>true</contains-null>
-              <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[data_cleaned.csv_82251B7EA3544BCDA02BA9CC396D606C]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>invoicedate</remote-name>
@@ -289,7 +286,6 @@
               <aggregation>Year</aggregation>
               <approx-count>45302</approx-count>
               <contains-null>true</contains-null>
-              <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[data_cleaned.csv_82251B7EA3544BCDA02BA9CC396D606C]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>unitprice</remote-name>
@@ -303,7 +299,6 @@
               <aggregation>Sum</aggregation>
               <approx-count>496</approx-count>
               <contains-null>true</contains-null>
-              <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[data_cleaned.csv_82251B7EA3544BCDA02BA9CC396D606C]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>customerid</remote-name>
@@ -317,7 +312,6 @@
               <aggregation>Sum</aggregation>
               <approx-count>12166</approx-count>
               <contains-null>true</contains-null>
-              <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[data_cleaned.csv_82251B7EA3544BCDA02BA9CC396D606C]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>country</remote-name>
@@ -332,7 +326,6 @@
               <approx-count>57</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LPT_RPT' />
-              <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[data_cleaned.csv_82251B7EA3544BCDA02BA9CC396D606C]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
             </metadata-record>
           </metadata-records>
         </connection>
@@ -697,14 +690,14 @@
       <zones>
         <zone h='45357' id='3' name='Total Sales by Product Category' w='44762' x='1714' y='3571' />
         <zone h='36250' id='4' name='Seasonal Trend Analysis' w='45333' x='1048' y='53571' />
-        <zone h='70714' id='5' name='Purchase Frequency' w='36084' x='50044' y='10714' />
+        <zone h='70714' id='5' name='Purchase Frequency' w='36084' x='48903' y='13571' />
       </zones>
       <devicelayouts>
         <devicelayout auto-generated='true' name='Phone'>
           <size maxheight='800' minheight='800' sizing-mode='vscroll' />
           <zones>
-            <zone h='100000' id='7' type-v2='layout-basic' w='100000' x='0' y='0'>
-              <zone h='97142' id='6' param='vert' type-v2='layout-flow' w='98596' x='702' y='1429'>
+            <zone h='100000' id='9' type-v2='layout-basic' w='100000' x='0' y='0'>
+              <zone h='97142' id='8' param='vert' type-v2='layout-flow' w='98596' x='702' y='1429'>
                 <zone fixed-size='254' h='45357' id='3' is-fixed='true' name='Total Sales by Product Category' w='44762' x='1714' y='3571'>
                   <zone-style>
                     <format attr='border-color' value='#000000' />
@@ -816,7 +809,7 @@
       </cards>
       <simple-id uuid='{CAEEEF4D-3650-4346-9628-CB84948822DC}' />
     </window>
-    <window class='dashboard' maximized='true' name='Dashboard'>
+    <window class='dashboard' name='Dashboard'>
       <viewpoints>
         <viewpoint name='Purchase Frequency' />
         <viewpoint name='Seasonal Trend Analysis'>
@@ -829,7 +822,7 @@
       <active id='5' />
       <simple-id uuid='{641A5E05-8040-4C51-8304-E097B6C29EC7}' />
     </window>
-    <window class='worksheet' name='Total Invoices by Country'>
+    <window class='worksheet' maximized='true' name='Total Invoices by Country'>
       <cards>
         <edge name='left'>
           <strip size='160'>
