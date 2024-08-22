@@ -16,6 +16,14 @@ def populate_table_from_csv(connection, table_name, csv_file_path):
     # Load the CSV file into a DataFrame
     data = pd.read_csv(csv_file_path)
     
+    # Remove duplicates based on the primary key column(s)
+    if table_name == "Customers":
+        data = data.drop_duplicates(subset=["customerid"])
+    elif table_name == "Products":
+        data = data.drop_duplicates(subset=["stockcode"])
+    elif table_name == "Invoices":
+        data = data.drop_duplicates(subset=["invoiceno"])
+    
     # Prepare the SQL statement for data insertion
     placeholders = ', '.join(['%s'] * len(data.columns))
     columns = ', '.join(data.columns)
@@ -23,11 +31,15 @@ def populate_table_from_csv(connection, table_name, csv_file_path):
     
     # Insert each row
     for row in data.itertuples(index=False, name=None):
-        cursor.execute(sql, row)
+        try:
+            cursor.execute(sql, row)
+        except mysql.connector.IntegrityError as e:
+            print(f"Error inserting row {row}: {e}")
     
     # Commit the transaction
     connection.commit()
     cursor.close()
+
 
 def close_connection(connection):
     connection.close()
