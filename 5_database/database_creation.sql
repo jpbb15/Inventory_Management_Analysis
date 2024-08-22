@@ -1,5 +1,5 @@
-CREATE DATABASE inventory_management;
-USE inventory_management;
+CREATE DATABASE InventoryManagement;
+USE InventoryManagement;
 
 CREATE TABLE Customers (
     customerid INT PRIMARY KEY,
@@ -7,18 +7,23 @@ CREATE TABLE Customers (
 );
 
 CREATE TABLE Products (
-    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    stockcode VARCHAR(255) PRIMARY KEY,
     description VARCHAR(255),
     unitprice DECIMAL(10, 2)
 );
 
-CREATE TABLE Transactions (
-    transaction_id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE Invoices (
+    invoiceno VARCHAR(255) PRIMARY KEY,
     invoicedate DATETIME,
     customerid INT,
-    product_id INT,
+    FOREIGN KEY (customerid) REFERENCES Customers(customerid)
+);
+
+CREATE TABLE InvoiceItems (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    invoiceno VARCHAR(255),
+    stockcode VARCHAR(255),
     quantity INT,
-    total_purchase DECIMAL(10, 2),
-    FOREIGN KEY (customerid) REFERENCES Customers(customerid),
-    FOREIGN KEY (product_id) REFERENCES Products(product_id)
+    FOREIGN KEY (invoiceno) REFERENCES Invoices(invoiceno),
+    FOREIGN KEY (stockcode) REFERENCES Products(stockcode)
 );
